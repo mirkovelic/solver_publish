@@ -1,0 +1,270 @@
+%!TEX TS-program = latex
+%\documentclass[10pt,a4paper,oneside]{article}
+\documentclass[]{svjour3}
+%%\documentclass[12pt,a4paper,oneside]{amsart}
+%%\usepackage{amsfonts,mathrsfs}
+%%\usepackage{amsmath, amsthm, amssymb}
+\usepackage{amsmath,mathrsfs}
+%  \newcommand{\field}[1]{\mathbb{#1}}
+%\usepackage{amsfonts}
+%%%\usepackage{sectsty}
+
+\usepackage[dvips]{graphicx}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+%%\usepackage{lineno}
+\usepackage[hang]{subfigure}
+\usepackage{mathptmx}
+
+%\renewcommand \thesection{\Roman{section}.}
+%\renewcommand \thesubsection{\Roman{section}.\Alph{subsection}.}
+
+%\font\chapterfontsans=cmss12 scaled \magstep 2
+
+%\usepackage{amsmath}
+%\usepackage{chicago}
+\usepackage{natbib}
+
+\usepackage{bm}
+%\oddsidemargin=11mm
+\oddsidemargin=3mm
+\textwidth=16.0cm
+\topmargin=-1.0cm
+\textheight=250mm
+%\textheight=606pt
+%\textwidth =15.cm
+%\headheight=15pt
+\hoffset=0.0cm
+\parindent=6mm
+%%\setlength{\parskip}{0.2cm}
+%%\setlength{\parskip}{0.0cm}
+%%%\renewcommand{\baselinestretch}{1.24}  % 1.5 Line Spacing
+%\renewcommand{\baselinestretch}{1.66}  % 2.0 Line Spacing
+
+\def\ba{\begin{eqnarray*}}
+\def\ea{\end{eqnarray*}}
+\def\ban{\begin{eqnarray}}
+\def\ean{\end{eqnarray}}
+
+\def\beq{\begin{equation}}
+\def\eeq{\end{equation}}
+
+\def\s{\sigma}
+\def\t{\tau}
+\def\e{\epsilon}
+
+\def\CL{\mathscr{L}}
+
+%\newtheorem{theorem}{\fontB Theorem}
+%\newtheorem{definition}{Definition}
+%\newtheorem{cororally}{Cororally}
+%\newtheorem{lemma}{Lemma}
+
+\newcommand\helvetica{\usefont{T1}{phv}{m}{n}}
+\DeclareTextFontCommand{\texthelv}{\helvetica}
+\newcommand\fontA{\usefont{T1}{pag}{db}{n}}
+\DeclareTextFontCommand{\textfontA}{\fontA}
+\newcommand\fontB{\usefont{T1}{phvv}{b}{n}}
+\DeclareTextFontCommand{\textfontB}{\fontB}
+\newcommand\fontC{\usefont{T1}{phvv}{m}{n}}
+\DeclareTextFontCommand{\textfontC}{\fontC}
+
+%\usepackage[T1]{fontenc}
+
+%%\allsectionsfont{\fontB}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\title{Lagrangian Augmented}
+\author{ Louis Moresi \and Mirko Veli\'c}
+\institute{ School of Mathematical Sciences,\\ Building 28, Monash University, \\
+Clayton, Victoria 3800, Australia. \\ 
+\email{louis.moresi@monash.edu}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\maketitle
+
+%%\linenumbers
+
+%%\begin{quote}
+\abstract{The Augmented Lagrangian method.
+\keywords{Augmented Lagrangian method \and Penalty method}
+}
+%%\end{quote}
+
+
+\section{Introduction}
+
+\section{Augmented Lagrangian}
+The Stokes' saddle point problem,
+\beq
+   \left[\begin{array}{cc}
+       K   & G \rule{0pt}{13pt}\\
+       G^T & 0 \rule{0pt}{13pt}
+   \end{array}\right]
+   \left[
+\begin{array}{c}
+u  \rule{0pt}{13pt}\\
+p   \rule{0pt}{13pt}
+\end{array}
+\right] 
+=
+\left[\begin{array}{c}
+f  \rule{0pt}{13pt}\\
+h   \rule{0pt}{13pt}
+\end{array}
+\right]
+\label{stokes}
+\eeq
+may be regarded as the result of the Lagrange multiplier method applied to solving
+\beq
+   K u = f
+\eeq
+subject to the constraint,
+\beq
+  G^T u  = h,
+\eeq
+where $p$ is a vector of Langrange multipliers. i.e.,
+The Stokes' system gives the solution which is the extremum of
+\beq
+    \phi = \frac{1}{2}u^T K u - u^T f + p^T(G^T u -h).
+\eeq
+
+The augmented lagrangian method may be obtained as the extremum of
+\beq
+    \phi = \frac{1}{2}u^T K u - u^T f + p^T(G^T u -h) + \frac{\lambda}{2}(G^T u -h)^2,\label{al}
+\eeq
+where a term with a penalty factor has beed added (augmented).
+
+Differentiating (\ref{al}) gives,
+\beq
+   K u - f + G p + \lambda G(G^T u - h) = 0
+\eeq
+\beq
+  G^T u -h =0.
+\eeq
+
+\beq
+   \left[\begin{array}{cc}
+       K + \lambda G G^T  & G \rule{0pt}{13pt}\\
+       G^T & 0 \rule{0pt}{13pt}
+   \end{array}\right]
+   \left[
+\begin{array}{c}
+u  \rule{0pt}{13pt}\\
+p   \rule{0pt}{13pt}
+\end{array}
+\right] 
+=
+\left[\begin{array}{c}
+f + \lambda G h \rule{0pt}{13pt}\\
+h   \rule{0pt}{13pt}
+\end{array}
+\right]
+\label{mag}
+\eeq
+
+\section{Scaling}
+A consistent scaling of (\ref{mag}) is
+\beq
+     (D K D^T)(D^{-T} u) - D f + D G p + \lambda D G(G^T D^T D^{-T} u - h) = 0
+\eeq
+
+\beq
+   \left[\begin{array}{cc}
+       D K D^T + \lambda D G G^T D^T  & D G \rule{0pt}{13pt}\\
+       G^T D^T & 0 \rule{0pt}{13pt}
+   \end{array}\right]
+   \left[
+   \begin{array}{c}
+     D^{-T}u  \rule{0pt}{13pt}\\
+     p   \rule{0pt}{13pt}
+   \end{array}
+   \right] 
+   =
+   \left[\begin{array}{c}
+       D f + \lambda D G h \rule{0pt}{13pt}\\
+       h   \rule{0pt}{13pt}
+     \end{array}
+     \right].
+   \label{scaledmag}
+\eeq
+
+
+The Schur compliment of (\ref{scaledmag}) is
+\beq
+    G^T D^T (D K D^T + \lambda D G G^T D^T)^{-1} D G = G^T D^T D^{-T} (K + \lambda G G^T)^{-1} D^{-1} D G =  G^T (K + \lambda G G^T)^{-1} G.
+\eeq
+and is identical to the compliment of (\ref{stokes}).
+
+\section{Boundary Conditions + Method}
+It is easy to show that the application of boundary conditions and the augmented lagrangian method to (\ref{stokes})
+commute.
+
+Decompose into reduced system and boundary condition terms.
+\beq
+   \left[\begin{array}{ccc}
+       K_R & K_B    & G_R \rule{0pt}{13pt}\\
+       K_C & K_{BC}  & G_B \rule{0pt}{13pt}\\
+       G_R^T & G_B^T & 0 \rule{0pt}{13pt}
+   \end{array}\right]
+   \left[\begin{array}{c}
+u_R  \rule{0pt}{13pt}\\
+u_B  \rule{0pt}{13pt}\\
+p   \rule{0pt}{13pt}
+\end{array}
+\right] 
+=
+\left[\begin{array}{c}
+f_R \rule{0pt}{13pt}\\
+f_B \rule{0pt}{13pt}\\
+h   \rule{0pt}{13pt}
+\end{array}
+\right]
+\eeq
+This reduces to, after moving boundary condition terms to RHS
+\beq
+   \left[\begin{array}{cc}
+       K_R   & G_R \rule{0pt}{13pt}\\
+       G_R^T & 0 \rule{0pt}{13pt}
+   \end{array}\right]
+   \left[\begin{array}{c}
+u_R  \rule{0pt}{13pt}\\
+p   \rule{0pt}{13pt}
+\end{array}
+\right] 
+=
+\left[\begin{array}{c}
+f_R -K_B u_B\rule{0pt}{13pt}\\
+h   -G_B^T u_B\rule{0pt}{13pt}
+\end{array}
+\right]
+\eeq
+\section{Epilogue}
+
+\begin{acknowledgements}
+
+ ....
+
+\end{acknowledgements}
+
+%% this forces all figs so far to be printed. Now hopefully they won't appear in the middle of the ref list.
+%%\cleardoublepage
+%%\bibliographystyle{plain}
+%%\bibliography{bib}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
