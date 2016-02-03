@@ -99,6 +99,71 @@ Clayton, Victoria 3800, Australia. \\
 
 \section{Introduction}
 
+Incompressible Stokes flow solver is the main building block for codes designed to model plate-tectonics: the coupled deformation
+of the Earth's lithosphere, asthenosphere and mantle.  Implicit, elliptic ... 
+
+On the planetary scale, the mantle is compressible, but the appropriate approximation is to assume a decoupling
+of the dynamic, elastic compressible effects (e.g. seismic wave propagation) and the slow fluid-flow of material
+with respect to a compressible reference state. This latter formulation poses identical numerical difficulties to
+the incompressible problem.
+
+FEM is commonly used because it provided a robust way to formulate complicated constitutive laws, conform meshes to
+the emergent, complicated geometry of the domain, and consistent mechanisms to handle steps in material properties.
+However, the application of the incompressibility constraint provides a significant challenge.
+
+In many respects, this challenge is a recent one. When I was a lad, we always used the penalty method [hughes ...]
+combined with a direct solver to obtain accurate, close-to-incompressible flow solutions with high accuracy [moresi et al].
+However, as high resolution, 3D, and global-scale computations have become routine, the poor-scaling of direct
+solvers with increasing problem size has led to the widespread adoption of iterative methods in this field, 
+particularly those based on multigrid. 
+
+The matrices arising from the penalty method are typically very ill-conditioned and most iterative methods 
+are poorly suited to such systems. Instead, one of the most popular approaches currently in use is to 
+apply a Schur-complement reduction to the block system describing the constrained flow and to solve this
+system with one of the standard Krylov-subspace iterative methods [Fortin, Wathen and all that lot ... need to
+check the book to see what they cover of this already]. This
+results in a hierarchical solution approach with two requirements: an efficient, robust \textit{inner solver} 
+for the unconstrained problem; and an effective preconditioner for the Schur complement system [may et al, 2009].
+In addition to standard preconditioning, it is also possible to use a hybrid \textit{Augmented Lagrangian} method
+to improve the convergence of the krylov sub-space method. This approach includes a term into the 
+variational problem of the \textit{inner solve} which penalises against violating the constraint equation, 
+but with a penalty parameter which small enough to keep the condition number of the inner problem within the 
+domain of convergence of the chosen solver. With a sufficiently high penalty and robust inner solve,
+this approach is equivalent to the usual penalty method with a back-substitution for the pressure equation.
+[[Um ... so what !!]]
+
+Our goal in this paper is to examine the balance between 
+
+
+\section{Target problems}
+
+All are dominated by rheological variations. Analytic solutions exist for some cases.
+They mimic the typical problems we encounter in models of plate tectonics
+
+The following figures illustrate the condition numbers of the Stokes stiffness matrix ($K$) as well as 
+those of the Schur compliment matrix ($S$).
+
+The condition numbers are calculated by taking the singular value decomposition of the matrices.
+In the case of the Schur matrix we have divided the largest singular value by the second smallest as the minimal value is always zero due to the constant null-space associated with the pressure.
+
+This gives an effective condition number that reflects the response of iterative methods to this matrix.
+This can be seen in the second set of figures showing the total inner iterations of the Schur compliment (Pressure) solve for the
+Stokes problem.
+
+The effect of the penalty on all of these examples appears to be fairly consistent.
+
+The Q1-P0 element examples show that the augmented lagrangian method improves the convergence for smallish penalty values while
+it appears to have no negative impact for the same values for the higher order mesh examples.
+
+Whilst the speed-up or advantage does not appear dramatic for these simple examples.
+It is important that it is not a disadvantage for simpler models.
+The augmented lagrangian method will often allow the more extensive models to either converge where they previously would not or provide a dramatic improvement in convergence.
+(examples?)
+
+In a nutshell the method improves the condition number of the Schur system and therefore hopefully it's convergence properties
+whilst degrading somewhat the properties of the matrix associated with the inner (velocity) solves. But we expect to offset this
+with tools like multigrid which are available for this part of the solve hierarchy.
+
 \section{Augmented Lagrangian}
 The Stokes' saddle point problem,
 \beq
@@ -244,6 +309,54 @@ h   -G_B^T u_B\rule{0pt}{13pt}
 \end{array}
 \right]
 \eeq
+
+\subsection{Vertical layerings}
+The solkx solution has a viscosity variation that is exponential.
+
+%%\includegraphics[width=\textwidth]{fig/condNumberssolkxq2q1__no_scale.pdf}
+
+%%\includegraphics[width=\textwidth]{fig/workPtimesolkxq2q1_totalWork_no_scale.pdf}
+
+\subsection{Lateral variations}
+The solcx solution has a step lateral viscosity jump mid-way along a $1x1$ box.
+
+%\includegraphics[width=\textwidth]{fig/condNumberssolcxq2q1__no_scale.pdf}
+
+%\includegraphics[width=\textwidth]{fig/workPtimesolcxq2q1_totalWork_no_scale.pdf}
+
+\subsection{Sinking blobs in 2D and 3D}
+A sinking viscous blob.
+
+%\includegraphics[width=\textwidth]{fig/condNumberssolsinkerq2q1__no_scale.pdf}
+
+%\includegraphics[width=\textwidth]{fig/workPtimesolsinkerq2q1_totalWork_no_scale.pdf}
+
+
+\section{Momentum balance}
+
+The momentum balance equation is:
+\begin{equation}
+	\tau_{ij,j} - p_{,i} = f_i
+\end{equation}
+Substituting the constitutive equation (\ref{eq:VEConstStiffnessForm}) 
+\begin{equation}
+	\frac{\partial }{\partial x_j} \left( 
+		2 \eta_{\rm eff} D^t_{ij}(\mathbf{x}^t_p) +
+		\frac{\eta_{\rm eff}}{\mu \Delta t_e}
+		 {\tau}_{ij}^t(\Delta t_e, \mathbf{x}^t_p, \mathbf{u}) ) \right)
+		- p_{,i} = f_{,i}
+\end{equation}
+or (\ref{eq:VEConstStiffnessForm2}) 
+\begin{equation}
+	\frac{\partial }{\partial x_j} \left( 
+		2 \eta_{\rm eff} D^t_{ij}(\mathbf{x}^t_p) +
+		\frac{\eta_{\rm eff}}{\mu \Delta t_e}
+		 	\mathcal{T}^{x^t_p}_{\Delta t_e} \left(
+			 \tau_{ij}^{t-\Delta t_e}(\mathbf{x}_p^{t-\Delta t_e}) \right) \right)
+		- p_{,i} = f_{,i}
+\end{equation}
+
+
 \section{Epilogue}
 
 \begin{acknowledgements}
